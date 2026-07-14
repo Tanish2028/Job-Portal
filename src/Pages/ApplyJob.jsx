@@ -2,9 +2,12 @@ import React, { useContext, useEffect, useState } from 'react'
 import { AppContext } from '../Context/AppContext'
 import Loading from '../Components/Loading.jsx'
 import NavBar from '../Components/NavBar.jsx'
-import { assets, jobsData } from '../assets/assets'
+import { assets } from '../assets/assets'
 import kconvert from 'k-convert'
 import moment from 'moment'
+import { useParams } from 'react-router-dom'
+import JobCard from '../Components/JobCard.jsx'
+import Footer from '../Components/Footer.jsx'
 const ApplyJob = () => {
 
   const {id} = useParams()
@@ -30,7 +33,7 @@ const ApplyJob = () => {
 
   return JobData ? (
     <>
-     <Navbar />
+     <NavBar />
      <div className='min-h-screen flex flex-col py-10 container px-4 2xl:px-20 mx-auto'>
       <div className='bg-white text-black rounded-lg w-full'>
         <div className='flex justify-center md:justify-between flex-wrap gap-8 px-14 py-20 mb-6 bg-sky-50 border-sky-400 rounded-xl'>
@@ -61,11 +64,30 @@ const ApplyJob = () => {
 
           <div className='flex flex-col justify-center text-end text-sm max-md:text-center'>
             <button className='bg-blue-600 p-2.5 px-10 text-white rounded'>Apply Now</button>
-            <p className='mt-1 text-gray-600'>Posted {moment(JobData.date).fromNow}</p>
+            <p className='mt-1 text-gray-600'>Posted {moment(JobData.date).fromNow()}</p>
+          </div>
+        </div>
+
+        <div className='flex flex-col lg:flex-row justify-between items-start'>
+          <div className='w-full lg:w-2/3'>
+            <h2 className='font-bold text-2xl mb-4'>Job description</h2>
+            <div className='rich-text' dangerouslySetInnerHTML={{ __html: JobData.description }} />
+            <button className='bg-blue-600 p-2.5 px-10 text-white rounded mt-10'>Apply Now</button>
+          </div>
+
+          {/* Right Section More Jobs */}
+          <div className='w-full lg:w-1/3 mt-8 lg:mt-0 lg:ml-8 space-y-5'>
+            <h2>More Jobs from {JobData.companyId.name}</h2>
+            {
+              jobs.filter(job => job._id !== JobData._id && job.companyId._id == JobData.companyId._id).filter(job =>true).slice(0,4).map((job,index)=>
+                <JobCard key={index} job={job} />)
+            }
           </div>
         </div>
       </div>
      </div>
+
+     <Footer />
 
     </>
   ) : (
